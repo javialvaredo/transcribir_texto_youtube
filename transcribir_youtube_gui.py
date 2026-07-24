@@ -15,6 +15,8 @@ import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext
 
+from docx import Document
+
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import (
     TranscriptsDisabled,
@@ -53,6 +55,19 @@ def obtener_transcripcion_texto(url_o_id: str, idiomas) -> str:
     return texto_completo
 
 
+def guardar_como_word(texto: str, ruta: str, titulo: str = "Transcripción"):
+    """Guarda el texto en un documento .docx con un título y el texto como cuerpo."""
+    doc = Document()
+    doc.add_heading(titulo, level=1)
+    # Dividimos en párrafos: un párrafo por cada punto seguido, para que no sea
+    # un único bloque gigante de texto.
+    for parrafo in re.split(r"(?<=[.?!])\s+(?=[A-ZÁÉÍÓÚÑ])", texto):
+        parrafo = parrafo.strip()
+        if parrafo:
+            doc.add_paragraph(parrafo)
+    doc.save(ruta)
+
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -76,7 +91,7 @@ class App(tk.Tk):
         frame_salida = tk.Frame(self)
         frame_salida.pack(fill="x", padx=12)
         self.entry_salida = tk.Entry(frame_salida, width=56)
-        self.entry_salida.insert(0, "transcripcion.txt")
+        self.entry_salida.insert(0, "transcripcion.docx")
         self.entry_salida.pack(side="left", fill="x", expand=True)
         tk.Button(frame_salida, text="Examinar...", command=self.elegir_archivo).pack(side="left", padx=(6, 0))
 
@@ -91,9 +106,9 @@ class App(tk.Tk):
 
     def elegir_archivo(self):
         ruta = filedialog.asksaveasfilename(
-            defaultextension=".txt",
-            filetypes=[("Archivo de texto", "*.txt"), ("Todos los archivos", "*.*")],
-            initialfile="transcripcion.txt",
+            defaultextension=".docx",
+            filetypes=[("Documento de Word", "*.docx"), ("Todos los archivos", "*.*")],
+            initialfile="transcripcion.docx",
         )
         if ruta:
             self.entry_salida.delete(0, tk.END)
@@ -124,8 +139,7 @@ class App(tk.Tk):
     def _procesar_en_hilo(self, url, idiomas, salida):
         try:
             texto = obtener_transcripcion_texto(url, idiomas)
-            with open(salida, "w", encoding="utf-8") as f:
-                f.write(texto)
+            guardar_como_word(texto, salida, titulo=f"Transcripción - {url}")
             self.after(0, self._mostrar_resultado, texto, salida)
         except (TranscriptsDisabled, NoTranscriptFound):
             self.after(0, self._mostrar_error, "Este video no tiene transcripción/subtítulos disponibles en esos idiomas.")
