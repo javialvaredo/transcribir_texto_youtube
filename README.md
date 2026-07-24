@@ -1,13 +1,13 @@
 # Transcribir Texto YouTube
 
-Aplicación de escritorio simple (con interfaz gráfica en tkinter) para obtener la transcripción de un video de YouTube y guardarla como texto plano, sin marcas de tiempo.
+Aplicación de escritorio simple (con interfaz gráfica en tkinter) para obtener la transcripción de un video de YouTube y guardarla como documento de Word, sin marcas de tiempo.
 
 ## ¿Qué hace?
 
 1. Pegás el link (o el ID) de un video de YouTube.
 2. Elegís los idiomas preferidos para la transcripción, en orden de prioridad (por ejemplo: `es, en`).
 3. Elegís dónde guardar el resultado.
-4. La app descarga la transcripción disponible en YouTube (subtítulos/CC) y la guarda como un archivo `.txt` con el texto completo, sin timestamps.
+4. La app descarga la transcripción disponible en YouTube (subtítulos/CC) y la guarda como un archivo `.docx` con el texto completo dividido en párrafos, sin timestamps.
 
 No descarga audio ni video, ni genera la transcripción por sí misma: usa las transcripciones/subtítulos que YouTube ya tiene disponibles para ese video.
 
@@ -56,10 +56,10 @@ python3 transcribir_youtube.py
 Se abre una ventana donde:
 - Pegás el link o ID del video de YouTube.
 - Escribís los idiomas preferidos, separados por coma (ej: `es, en`). El programa intenta cada idioma en ese orden hasta encontrar una transcripción disponible.
-- Elegís el archivo de salida (por defecto `transcripcion.txt`), con el botón "Examinar..." si querés cambiar la ubicación.
+- Elegís el archivo de salida (por defecto `transcripcion.docx`), con el botón "Examinar..." si querés cambiar la ubicación.
 - Hacés clic en "Obtener transcripción".
 
-El resultado se muestra en la ventana y se guarda automáticamente en el archivo elegido.
+El resultado se muestra en la ventana (como texto) y se guarda automáticamente como documento de Word en el archivo elegido, con un título y el texto separado en párrafos.
 
 ## Errores posibles
 
@@ -69,4 +69,5 @@ El resultado se muestra en la ventana y se guarda automáticamente en el archivo
 ## Dependencias principales
 
 - [`youtube-transcript-api`](https://pypi.org/project/youtube-transcript-api/): para obtener las transcripciones de YouTube.
+- [`python-docx`](https://pypi.org/project/python-docx/): para generar el documento de Word con el resultado.
 - `tkinter`: interfaz gráfica (incluida en la biblioteca estándar de Python).
